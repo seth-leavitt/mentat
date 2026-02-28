@@ -170,3 +170,39 @@ This is not a summarization tool.
 It is an autonomous course-construction engine.
 
 It transforms knowledge into structured pedagogy, interactive representation, and measurable mastery—at scale.
+
+---
+
+## TypeScript Agentic Pipeline
+
+The repository now includes a full TypeScript agentic pipeline that mirrors the design above and executes each generation layer as an explicit agent step.
+
+- `src/layers/input/inputPreprocessingLayer.ts` for PDF ingestion and normalized corpus output
+- `src/agents/runtime/agentRuntime.ts` for Claude API calls, retries, JSON parsing, and trace metadata
+- `src/layers/roadmap/roadmapGenerationAgent.ts` for canonical roadmap generation via Claude
+- `src/layers/chapter/chapterDecompositionAgent.ts` for lesson specification decomposition via Claude
+- `src/layers/lesson/lessonGenerationAgent.ts` for parallelized lesson subagent generation via Claude
+- `src/layers/graphics/interactiveGraphicsEngine.ts` for standardized visual component payloads
+- `src/layers/assessment/assessmentEngine.ts` for competency-aligned assessment planning via Claude
+- `src/layers/orchestration/courseOrchestrator.ts` for lifecycle coordination and artifact routing
+- `src/layers/orchestration/pipelineArtifactStore.ts` for run-level artifact persistence
+- `src/layers/storage/courseAssemblyStore.ts` for assembly and persistence
+
+### Local Run
+
+1. Copy `.env.example` to `.env` and set `ANTHROPIC_API_KEY`.
+2. Put PDFs in `pdfs/`.
+3. Install dependencies with `npm install` (or `npm.cmd install` in PowerShell with script policy restrictions).
+4. Run pipeline with `npm run dev`.
+
+Output locations:
+
+- Assembled course packages: `output/courses/`
+- Per-run stage artifacts and raw model outputs: `output/runs/<run-id>/`
+- Agent traces: `output/runs/<run-id>/agent-traces.json`
+
+### Runtime Modes
+
+- `MENTAT_AGENT_MODE=live` always uses Claude APIs.
+- `MENTAT_AGENT_MODE=mock` skips API calls and uses deterministic fallbacks.
+- `MENTAT_AGENT_MODE=auto` uses live mode when `ANTHROPIC_API_KEY` is set, otherwise mock mode.
